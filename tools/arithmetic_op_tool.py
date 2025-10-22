@@ -1,7 +1,7 @@
 import os 
 from dotenv import load_dotenv
 from langchain.tools import tool
-from langchain_community.utilites.alpha_vantage import AlphaVantageAPIWrapper
+from langchain_community.utilities.alpha_vantage import AlphaVantageAPIWrapper
 
 load_dotenv()
 
