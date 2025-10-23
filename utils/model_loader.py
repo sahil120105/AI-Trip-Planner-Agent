@@ -7,11 +7,14 @@ from langchain_groq import ChatGroq
 from langchain_openai import ChatOpenAI
 
 
+
+
 class ConfigLoader:
 
     def __init__(self):
         print("Loading config...")
         self.config = load_config()
+        load_dotenv()
         
     def __getitem__(self, key):
         return self.config.get(key)
@@ -22,7 +25,7 @@ class ModelLoader(BaseModel):
     config: Optional[ConfigLoader] = Field(default=None, exclude=True)
 
     def model_post_init(self, _context: Any) -> None:
-        self.config - ConfigLoader()
+        self.config = ConfigLoader()
 
     class Config:
         arbitrary_types_allowed = True
@@ -33,13 +36,30 @@ class ModelLoader(BaseModel):
         """
 
         print("LLM loading...")
-        print("Loading model from provider: {self.model_provider}")
+        print(f"Loading model from provider: {self.model_provider}")
 
         if self.model_provider == "groq":
             print("Loading LLM from Groq...")
+            
             groq_api_key = os.getenv("GROQ_API_KEY")
-            model_name = self.config["llm"]["groq"]["model"]
+            
+            # --- DEBUG STEP 1: Check API Key ---
+            if not groq_api_key:
+                 raise ValueError("CRITICAL ERROR: GROQ_API_KEY is missing from environment.")
+            print("GROQ_API_KEY found. Attempting to load model name...")
+            
+            # --- DEBUG STEP 2: Handle Config KeyError ---
+            try:
+                model_name = self.config["llm"]["groq"]["model"]
+                print(f"Config path found. Model name: {model_name}")
+            except KeyError as e:
+                # This will raise a visible error if the config path is wrong
+                raise KeyError(f"CRITICAL ERROR: Missing configuration key in config.yaml: {e}")
+                
+            # --- EXECUTION ---
+            print("Initializing ChatGroq...")
             llm = ChatGroq(model=model_name, api_key=groq_api_key)
+            print("ChatGroq initialized successfully.")
         elif self.model_provider == "openai":
             print("Loading LLM from OpenAI..............")
             openai_api_key = os.getenv("OPENAI_API_KEY")

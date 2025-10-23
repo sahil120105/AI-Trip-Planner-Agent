@@ -12,21 +12,31 @@ class GraphBuilder():
 
     def __init__(self, model_provider: str = "groq"):
         self.model_loader = ModelLoader(model_provider=model_provider)
+        
         self.llm = self.model_loader.load_llm()
         self.tools = []
 
+        print("Initalize tools")
         self.weather_tools = WeatherInfoTool()
+        print("Initalize tools 1")
         self.place_search_tools = PlaceSearchTool()
+        print("Initalize tools 2")
         self.calculator_tool = CalculatorTool()
+        print("Initalize tools 3")
         self.currency_converter_tool = CurrencyConverterTool()
 
+        print("loading tools")
+        all_tool_lists = [
+            self.weather_tools.weather_tool_list,
+            self.place_search_tools.place_search_tool_list,
+            self.calculator_tool.calculator_tool_list,
+            self.currency_converter_tool.currency_converter_tool_list
+        ]
         
-        self.tools.extend([
-            self.weather_tools,
-            self.place_search_tools,
-            self.calculator_tool,
-            self.currency_converter_tool
-        ])
+        for tool_list in all_tool_lists:
+            self.tools.extend(tool_list)
+
+        print("tools extended")
 
         self.llm_with_tools = self.llm.bind_tools(self.tools)
         self.graph = None

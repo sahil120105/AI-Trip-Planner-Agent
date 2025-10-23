@@ -33,7 +33,7 @@ if submit_button and user_input.strip():
     try:
         with st.spinner("Agent is thinking..."):
             payload = {"question": user_input}
-            response = requests.post(f"{BASE_URL}/query", params=payload)
+            response = requests.post(f"{BASE_URL}/query", json=payload)
             response.raise_for_status()        
 
         if response.status_code == 200:

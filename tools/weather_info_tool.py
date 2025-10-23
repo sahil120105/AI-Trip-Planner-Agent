@@ -11,6 +11,12 @@ class WeatherInfoTool:
     def __init__(self):
         load_dotenv()
         self.api_key = os.getenv("OPENWEATHERMAP_API_KEY")
+        if not self.api_key:
+            # Raise a clear error that will be caught and logged by the server
+            raise ValueError(
+                "CRITICAL ERROR: OPENWEATHERMAP_API_KEY not found in environment. "
+                "WeatherInfoTool cannot be initialized without it."
+            )
         self.weather_service = WeatherForecastTool(self.api_key)
         self.weather_tool_list = self._setup_tools()
 

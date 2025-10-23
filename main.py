@@ -2,19 +2,28 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from agent.agentic_workflow import GraphBuilder
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import os
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # set specific origins in prod
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 class QueryRequest(BaseModel):
     question: str
 
-@app.get("/query")
+@app.post("/query")
 async def query_travel_agent(query: QueryRequest):
 
     try:
         print(f"Query received: {query}")
-        graph = GraphBuilder()
+        graph = GraphBuilder(model_provider="groq")
         react_app = graph()
 
         png_graph = react_app.get_graph().draw_mermaid_png()

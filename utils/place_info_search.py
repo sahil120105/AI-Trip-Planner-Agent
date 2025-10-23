@@ -7,6 +7,7 @@ class GooglePlaceSearchTool:
     def __init__(self, api_key: str):
         self.places_wrapper = GooglePlacesAPIWrapper(gplaces_api_key=api_key)
         self.places_tool = GooglePlacesTool(api_wrapper=self.places_wrapper)
+        print("GooglePlaceSearchTool initialized")
     
     def google_search_attractions(self, place: str) -> dict:
         """
@@ -34,7 +35,7 @@ class GooglePlaceSearchTool:
 
 class TavilyPlaceSearchTool:
     def __init__(self):
-        pass
+        print("TavilyPlaceSearchTool initialized")
 
     def tavily_search_attractions(self, place: str) -> dict:
         """
