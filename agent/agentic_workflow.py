@@ -16,16 +16,11 @@ class GraphBuilder():
         self.llm = self.model_loader.load_llm()
         self.tools = []
 
-        print("Initalize tools")
         self.weather_tools = WeatherInfoTool()
-        print("Initalize tools 1")
         self.place_search_tools = PlaceSearchTool()
-        print("Initalize tools 2")
         self.calculator_tool = CalculatorTool()
-        print("Initalize tools 3")
         self.currency_converter_tool = CurrencyConverterTool()
 
-        print("loading tools")
         all_tool_lists = [
             self.weather_tools.weather_tool_list,
             self.place_search_tools.place_search_tool_list,
@@ -50,6 +45,7 @@ class GraphBuilder():
         
         user_question = state["messages"]
         input_question = [self.system_prompt] + user_question
+        print(input_question)
         response = self.llm_with_tools.invoke(input_question)
         return {"messages": [response]}
 

@@ -4,6 +4,9 @@ from agent.agentic_workflow import GraphBuilder
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import os
+from utils.save_to_document import save_document
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI()
 
@@ -14,6 +17,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+os.environ["LANGSMITH_API_KEY"] = os.getenv("LANGSMITH_API_KEY")
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
 
 class QueryRequest(BaseModel):
     question: str
@@ -37,6 +44,8 @@ async def query_travel_agent(query: QueryRequest):
 
         if isinstance(output, dict) and "messages" in output:
             final_output = output["messages"][-1].content  # Last AI response
+            # Save to markdown document
+            save_document(final_output)
         else:
             final_output = str(output)
 
